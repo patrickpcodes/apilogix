@@ -114,7 +114,6 @@ jobs:
           target: /home/ubuntu/apilogix-api/
 
       - name: Trying Manually SSH and run script
-        uses: actions/checkout@v2
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOSTNAME: ${{secrets.EC2_HOST}}
