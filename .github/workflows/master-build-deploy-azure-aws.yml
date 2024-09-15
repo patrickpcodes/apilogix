@@ -1,0 +1,81 @@
+name: Build and Deploy React and ASP.NET Core App
+
+on:
+  push:
+    branches:
+      - master 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code from develop branch
+        uses: actions/checkout@v4
+        with:
+          ref: master 
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        run: |
+          cd ApiLogix.Server.WebApp/
+          dotnet build --configuration Release
+
+      - name: Publish with dotnet
+        run: |
+          cd ApiLogix.Server.WebApp/
+          dotnet publish -c Release -o ${{ github.workspace }}/publish
+
+      # Upload the .NET app artifact for the deployment job
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: net-app
+          path: ${{ github.workspace }}/publish
+          retention-days: 1  # Retain for 1 day
+
+  deploy-aws:
+    runs-on: ubuntu-latest
+    needs: build  # This ensures that the deploy job waits for the build job to complete
+    if: ${{ success() }}  # Only run if the build job was successful
+    environment:
+      name: 'Production'
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: net-app
+          path: net-app
+
+      - name: List contents of downloaded artifact
+        run: ls -al net-app/
+
+      # Deploy the files to EC2 using SCP (secure copy)
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: net-app/
+          target: /home/ubuntu/apilogix-api/
+
+      - name: Trying Manually SSH and run script
+        uses: actions/checkout@v2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.EC2_HOST}}
+          USER_NAME: ubuntu
+          
+          run: |
+            echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+            ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              sudo systemctl restart apilogix-api.service
+              sudo systemctl reload nginx       
