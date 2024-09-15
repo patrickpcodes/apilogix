@@ -1,0 +1,6 @@
+@ApiLogix.Server.WebApp_HostAddress = http://localhost:5044
+
+GET {{ApiLogix.Server.WebApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
