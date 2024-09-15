@@ -119,9 +119,10 @@ jobs:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOSTNAME: ${{secrets.EC2_HOST}}
           USER_NAME: ubuntu
-
-          run: |
-            echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-            ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              sudo systemctl restart apilogix-api.service
-              sudo systemctl reload nginx
+    
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} <<EOF
+            sudo systemctl restart apilogix-api.service
+            sudo systemctl reload nginx
+          EOF
