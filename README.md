@@ -4,6 +4,6 @@ An app in order to keep track of API calls.
 
 # Testing
 
-![Jest Tests](https://img.shields.io/github/status/${{ github.repository }}/${{ github.sha }}/Jest%20Tests)
+![coverage](https://img.shields.io/github/actions/workflow/status/patrickpcodes/apilogix/master-build-deploy-azure-aws.yml)
 
 Description of my project...
