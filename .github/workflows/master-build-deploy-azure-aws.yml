@@ -60,7 +60,7 @@ jobs:
       - name: Run Nextjs Build script
         run: |
           cd apilogix-react-app
-          npm run build
+          npm run buildlinux
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1

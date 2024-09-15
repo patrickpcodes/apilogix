@@ -400,3 +400,5 @@ FodyWeavers.xsd
 .idea/
 
 apilogix-react-app/.env
+
+ApiLogix.Server.WebApp/wwwroot/

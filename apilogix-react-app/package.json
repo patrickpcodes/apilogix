@@ -4,12 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "justbuild": "next build",
+    "build": "npm run clean && next build && npm run copy",
     "start": "next start",
     "lint": "next lint",
+    "export": "next export",
     "test": "jest",
     "test:watch": "jest --watch",
-    "testJunit": "jest --ci --reporter=jest-junit --outputDir=reports/jest"
+    "testJunit": "jest --ci --reporter=jest-junit --outputDir=reports/jest",
+    "clean": "del-cli -f \"..\\ApiLogix.Server.WebApp\\wwwroot\\*\"",
+    "copy": "ncp out \"..\\ApiLogix.Server.WebApp\\wwwroot\"",
+    "buildlinux": "npm run cleanlinux && next build && npm run copylinux",
+    "cleanlinux": "del-cli -f ../ApiLogix.Server.WebApp/wwwroot/*",
+    "copylinux": "ncp out ../ApiLogix.Server.WebApp/wwwroot/"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -35,6 +42,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
+    "del-cli": "^5.0.0",
+    "ncp": "^2.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",
     "jest": "^29.7.0",

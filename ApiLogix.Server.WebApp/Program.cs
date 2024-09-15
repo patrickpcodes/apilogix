@@ -16,18 +16,29 @@ public class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        // if( app.Environment.IsDevelopment() )
-        //{
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        //}
-
         app.UseHttpsRedirection();
 
+
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseSwagger();
+        app.UseSwaggerUI( options =>
+        {
+            options.SwaggerEndpoint( "/swagger/v1/swagger.json", "My API v1" );
+        } );
 
+
+        app.UseCors( builder =>
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader() );
+
+        app.MapControllers();
+        app.MapFallbackToFile( "index.html" );
         app.MapControllers();
 
         app.Run();
