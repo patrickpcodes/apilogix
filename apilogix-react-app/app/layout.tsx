@@ -12,16 +12,12 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
-  return <ClientLayout>{children}</ClientLayout>;
-};
-
 // Main layout component
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <AppLayout>{children}</AppLayout>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
