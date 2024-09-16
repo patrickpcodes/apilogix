@@ -36,7 +36,9 @@ export default function Home() {
     >
       <AppToolbarComponent /> {/* Add the AppToolbarComponent here */}
       <br />
-      <h1 className="text-4xl font-bold">Welcome To ApiLogix</h1>
+      <h1 className="text-4xl font-bold">
+        Welcome To ApiLogix: App hosted on AWS
+      </h1>
       <br />
       <Button onClick={fetchFromApi} className="mt-4">
         Fetch Weather Data
