@@ -20,54 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x" # Specify the Node.js version you need
-
-      - name: Install dependencies
-        run: |
-          cd apilogix-react-app
-          npm install
-
-      - name: Run tests
-        run: |
-          cd apilogix-react-app
-          npm run testJunit
-
-      - name: Test Jest Junit Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure() # run this step even if previous step failed
-        with:
-          name: JEST Tests # Name of the check run which will be created
-          path: "apilogix-react-app/reports/jest/junit.xml" # Path to test results
-          reporter: jest-junit # Format of test results
-          fail-on-error: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update badge status
-        run: |
-          if grep -q '<failure>' apilogix-react-app/reports/jest/junit.xml; then
-            echo "Tests failed" > badge.txt
-          else
-            echo "Tests passed" > badge.txt
-          fi
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -d "{\"state\": \"$(cat badge.txt)\", \"context\": \"Jest Tests\"}" \
-          "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}"
-
-      - name: Run Nextjs Build script
-        run: |
-          cd apilogix-react-app
-          npm run buildlinux
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: "8.x"
-          include-prerelease: true
-
+      
       - name: Build with dotnet
         run: |
           cd ApiLogix.Server.WebApp/

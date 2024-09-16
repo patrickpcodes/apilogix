@@ -1,0 +1,98 @@
+name: Deploy Next.js App to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Navigate to Next.js app directory
+        working-directory: ./apilogix-react-app
+        run: |
+          npm install
+
+      - name: Run tests
+        working-directory: ./apilogix-react-app
+        run: |
+          npm run testJunit
+
+      - name: Test Jest Junit Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # run this step even if previous step failed
+        with:
+          name: JEST Tests # Name of the check run which will be created
+          path: "apilogix-react-app/reports/jest/junit.xml" # Path to test results
+          reporter: jest-junit # Format of test results
+          fail-on-error: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Inject .env file from GitHub Secrets
+        working-directory: ./apilogix-react-app
+        run: |
+          echo "${{ secrets.NEXT_APP_ENV_FILE }}" > .env.production
+
+      - name: Build the Next.js app
+        working-directory: ./apilogix-react-app
+        run: npm run build
+
+      - name: Copy .next files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: ./apilogix-react-app/.next
+          target: /home/ubuntu/apilogix-next/
+          
+      - name: Copy public files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: ./apilogix-react-app/public
+          target: /home/ubuntu/apilogix-next/
+          
+      - name: Copy package.json files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: ./apilogix-react-app/package.json
+          target: /home/ubuntu/apilogix-next/
+          
+      - name: Copy .env.production files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: ./apilogix-react-app/.env.production
+          target: /home/ubuntu/apilogix-next/
+
+      - name: Trying Manually SSH and run script
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.EC2_HOST}}
+          USER_NAME: ubuntu
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} <<EOF
+            sudo systemctl restart apilogix-next.service
+            sudo systemctl reload nginx
+          EOF
+         

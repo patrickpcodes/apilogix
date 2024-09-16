@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiLogix.Server.WebApp.Controllers;
 [ApiController]
-[Route( "[controller]" )]
+[Route( "/api/[controller]" )]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = new[]
@@ -17,10 +17,10 @@ public class WeatherForecastController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet( Name = "GetWeatherForecast" )]
+    [HttpGet]
     public IEnumerable<WeatherForecast> Get()
     {
-        return Enumerable.Range( 1, 2 ).Select( index => new WeatherForecast
+        return Enumerable.Range( 1, 20 ).Select( index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime( DateTime.Now.AddDays( index ) ),
             TemperatureC = Random.Shared.Next( -20, 55 ),
