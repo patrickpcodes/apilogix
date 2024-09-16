@@ -1,8 +1,11 @@
 "use client";
-import { useState } from "react"; // Import useState for managing state
+
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button"; // Import the Button component
+import { AppToolbarComponent } from "@/components/app-toolbar"; // Import the AppToolbarComponent
 
 export default function Home() {
-  const [apiResponse, setApiResponse] = useState(null); // State to store API response
+  const [apiResponse, setApiResponse] = useState(null); // State to hold API response
 
   async function fetchFromApi() {
     try {
@@ -21,27 +24,30 @@ export default function Home() {
       }
 
       const data = await response.json();
-      console.log(data);
-      setApiResponse(data); // Update state with the fetched data
-      return data;
+      setApiResponse(data); // Set the API response to state
     } catch (error) {
       console.error("There was an error:", error);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center flex-col">
-      <h1 className="text-2xl font-bold">Welcome to My Homepage</h1>
-      <button
-        onClick={fetchFromApi}
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
-      >
-        Fetch Data
-      </button>
+    <div
+      className={`flex-col items-center justify-center min-h-screen bg-background text-foreground`}
+    >
+      <AppToolbarComponent /> {/* Add the AppToolbarComponent here */}
+      <br />
+      <h1 className="text-4xl font-bold">Welcome To ApiLogix</h1>
+      <br />
+      <Button onClick={fetchFromApi} className="mt-4">
+        Fetch Weather Data
+      </Button>{" "}
+      {/* Button to fetch data */}
       {apiResponse && (
-        <pre className="mt-4">{JSON.stringify(apiResponse, null, 2)}</pre>
-      )}{" "}
-      {/* Display API response */}
+        <div className="mt-4 bg-background text-foreground">
+          <h2 className="text-2xl font-semibold">API Response:</h2>
+          <p>(apiResponse && {JSON.stringify(apiResponse, null, 2)})</p>
+        </div>
+      )}
     </div>
   );
 }
