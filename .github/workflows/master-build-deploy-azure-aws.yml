@@ -53,9 +53,17 @@ jobs:
           name: net-app
           path: net-app
 
-      - name: List contents of downloaded artifact
-        run: ls -al net-app/
+      - name: Delete asp net core app off EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.EC2_HOST}}
+          USER_NAME: ubuntu
 
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} <<EOF
+            rm -rf /home/ubuntu/apilogix-api/*
+          EOF
       # Deploy the files to EC2 using SCP (secure copy)
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7

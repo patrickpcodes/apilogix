@@ -3,7 +3,7 @@ name: Deploy Next.js App to EC2
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch: 
 
 jobs:
@@ -55,13 +55,25 @@ jobs:
         working-directory: ./apilogix-react-app
         run: npm run build
 
+      - name: Delete next app off EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.EC2_HOST}}
+          USER_NAME: ubuntu
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} <<EOF
+            rm -rf /home/ubuntu/apilogix-next/*
+          EOF
+        
       - name: Copy .next files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: ./apilogix-react-app/.next
+          source: apilogix-react-app/.next
           target: /home/ubuntu/apilogix-next/
           
       - name: Copy public files to EC2
@@ -70,7 +82,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: ./apilogix-react-app/public
+          source: apilogix-react-app/public
           target: /home/ubuntu/apilogix-next/
           
       - name: Copy package.json files to EC2
@@ -79,7 +91,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: ./apilogix-react-app/package.json
+          source: apilogix-react-app/package.json
           target: /home/ubuntu/apilogix-next/
           
       - name: Copy .env.production files to EC2
@@ -88,7 +100,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: ./apilogix-react-app/.env.production
+          source: apilogix-react-app/.env.production
           target: /home/ubuntu/apilogix-next/
 
       - name: Trying Manually SSH and run script
