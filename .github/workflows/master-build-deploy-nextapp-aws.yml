@@ -4,14 +4,22 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: 
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
+    permissions:
+      checks: write # Add this line to grant write permission for checks
+      contents: read
+      actions: read
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          ref: master
 
       - name: Install Node.js
         uses: actions/setup-node@v2
