@@ -11,7 +11,7 @@
     "export": "next export",
     "test": "jest",
     "test:watch": "jest --watch",
-    "testJunit": "jest --ci --reporter=jest-junit --outputDir=reports/jest",
+    "testJunit": "jest --ci --reporter=jest-junit",
     "clean": "del-cli -f \"..\\ApiLogix.Server.WebApp\\wwwroot\\*\"",
     "copy": "ncp out \"..\\ApiLogix.Server.WebApp\\wwwroot\"",
     "buildlinux": "npm run cleanlinux && next build && npm run copylinux",
