@@ -2,6 +2,7 @@
 
 An app in order to keep track of API calls.
 The goal would be to have a dashboard in which you can see all the API calls made, the status of each call, the response time, etc.
+Created initial Asp Net core app and SQL Database
 
 # Testing
 
