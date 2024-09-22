@@ -402,3 +402,5 @@ FodyWeavers.xsd
 ApiLogix.Server.WebApp/wwwroot/
 
 apilogix-react-app/.env.development
+
+ApiLogix.Server.WebApp/appsettings.Development.json

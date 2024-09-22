@@ -10,6 +10,7 @@ BEGIN
     SELECT @UrlId = UrlId
     FROM ApiUrls
     WHERE UserId = @UserId AND BaseUrl = @BaseUrl;
+	-- TODO need to handle case of already exists
 
     -- If not found, insert a new record
     IF @UrlId IS NULL

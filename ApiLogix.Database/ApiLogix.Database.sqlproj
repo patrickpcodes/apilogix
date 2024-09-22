@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Table\ApiLogs.sql" />
-    <Build Include="dbo\Table\Users.sql" />
     <Build Include="dbo\Table\ApiUrls.sql" />
     <Build Include="dbo\StoredProcedures\InsertUser.sql" />
     <Build Include="dbo\StoredProcedures\InsertApiUrl.sql" />
@@ -70,6 +69,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ApiLogix-dev.publish.xml" />
-    <None Include="ApiLogix-test.publish.xml" />
   </ItemGroup>
 </Project>

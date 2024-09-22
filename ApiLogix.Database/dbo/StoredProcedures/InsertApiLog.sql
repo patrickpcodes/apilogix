@@ -1,7 +1,6 @@
 ﻿CREATE PROCEDURE InsertApiLog
     @UserId UNIQUEIDENTIFIER,
-    @BaseUrl NVARCHAR(500),
-    @ApiName NVARCHAR(255),
+    @UrlId UNIQUEIDENTIFIER,
     @HttpMethod NVARCHAR(10),
     @ApiPath NVARCHAR(500),
     @StatusCode INT,
@@ -11,15 +10,13 @@
     @ErrorMessage NVARCHAR(MAX) = NULL  -- Optional parameter
 AS
 BEGIN
-    DECLARE @UrlId UNIQUEIDENTIFIER;
 
-    -- Call the InsertApiUrl procedure to get the UrlId (or create it if it doesn't exist)
-    EXEC @UrlId = InsertApiUrl @UserId, @BaseUrl, @ApiName;
-
+	DECLARE @LogId UNIQUEIDENTIFIER
     -- Insert the new API log
+	SET @LogId = NEWID();
     INSERT INTO ApiLogs (LogId, UrlId, HttpMethod, ApiPath, StatusCode, ResponseTimeMs, Timestamp, Payload, Response, ErrorMessage)
-    VALUES (NEWID(), @UrlId, @HttpMethod, @ApiPath, @StatusCode, @ResponseTimeMs, GETDATE(), @Payload, @Response, @ErrorMessage);
+    VALUES (@LogId, @UrlId, @HttpMethod, @ApiPath, @StatusCode, @ResponseTimeMs, GETDATE(), @Payload, @Response, @ErrorMessage);
     
     -- Return the newly inserted LogId
-    SELECT SCOPE_IDENTITY() AS LogId;
+    SELECT @LogId AS LogId;
 END;
