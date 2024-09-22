@@ -1,6 +1,9 @@
-﻿namespace ApiLogix.Server.WebApp;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class ApplicationUser
+namespace ApiLogix.Server.WebApp;
+
+public class ApplicationUser : IdentityUser
 {
-    
+    // Add ApiKey as an additional property
+    public Guid ApiKey { get; set; }
 }

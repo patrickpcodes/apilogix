@@ -66,6 +66,7 @@
     <Build Include="dbo\StoredProcedures\InsertUser.sql" />
     <Build Include="dbo\StoredProcedures\InsertApiUrl.sql" />
     <Build Include="dbo\StoredProcedures\InsertApiLog.sql" />
+    <Build Include="dbo\StoredProcedures\GetUserLogs.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ApiLogix-dev.publish.xml" />
